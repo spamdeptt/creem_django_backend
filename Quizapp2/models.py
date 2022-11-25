@@ -26,22 +26,8 @@ class Topic(models.Model):
     def __str__(self):
         return f"({self.subject})-{self.name}"
 
-class CreamCards(models.Model):
-    created_at  = models.DateTimeField(null=True)
-    author = models.ForeignKey(Authors, models.SET_NULL, null=True, blank=True )
-    subject = models.ForeignKey(Subjects, models.SET_NULL, null=True, blank=True )
-    ImageURL = models.CharField(max_length=1500)
-    title = models.CharField(max_length=500)
-    body = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.title}"
-
-    class Meta:
-         verbose_name_plural = "Cream Cards"
-
-
 class QuizQuestionCollection(models.Model):
+    created_at  = models.DateField(auto_now_add=True, blank=True, null=True)
     title = models.CharField(max_length=255)
     def __str__(self):
         return self.title
@@ -61,6 +47,8 @@ class QuizQuestion(models.Model):
     isBCorrect = models.BooleanField(default=False)
     isCCorrect = models.BooleanField(default=False)
     isDCorrect = models.BooleanField(default=False)
+    correctCount = models.IntegerField(default=1, blank=True, null=True)
+    inCorrectCount = models.IntegerField(default=1, blank=True, null=True)
     explanation = models.TextField()
 
     def __str__ (self):
@@ -86,5 +74,17 @@ class CreamCardsTest(models.Model):
          verbose_name_plural = "Cream Cards Test"
 
 
+class CreamCards(models.Model):
+    created_at  = models.DateTimeField(null=True)
+    author = models.ForeignKey(Authors, on_delete=models.SET_NULL, null=True, blank=True )
+    subject = models.ForeignKey(Subjects, on_delete=models.SET_NULL, null=True, blank=True )
+    ImageURL = models.CharField(max_length=1500)
+    title = models.CharField(max_length=500)
+    body = models.TextField(blank=True, null=True)
+    related_quiz = models.ForeignKey(QuizQuestionCollection, on_delete=models.SET_NULL,null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.title}"
 
+    class Meta:
+         verbose_name_plural = "Cream Cards"

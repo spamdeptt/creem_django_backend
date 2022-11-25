@@ -3,12 +3,13 @@ from . import models
 from django_summernote.admin import SummernoteModelAdmin
 # Register your models here.
 
-
 admin.site.register(models.Authors)
 admin.site.register(models.Subjects)
-admin.site.register(models.QuizQuestion)
 admin.site.register(models.Topic)
-admin.site.register(models.QuizQuestionCollection)
+
+class CollectionInline(admin.TabularInline):
+    model = models.QuizQuestion.collection.through
+
 
 @admin.register(models.CreamCards)
 class SummerAdmin(SummernoteModelAdmin): 
@@ -17,6 +18,26 @@ class CreamCardsAdmin(admin.ModelAdmin):
     list_display = ("created_at","title","subject")
 
 
+@admin.register(models.QuizQuestion)
+class QuizQuestionAdmin(admin.ModelAdmin):
+    list_display= ['preview_text','subject','id','get_collections']
+    list_filter = ('subject', )
+    list_display_links = ['preview_text']
+    search_fields = ('preview_text',)
+    
+    def get_collections(self, instance):
+        return [collection.title for collection in instance.collection.all()]
+
+
+@admin.register(models.QuizQuestionCollection) #https://stackoverflow.com/questions/43894232/displaying-both-sides-of-a-manytomany-relationship-in-django-admin
+class QuizQuestionCollectionAdmin(admin.ModelAdmin):
+    list_display= ['id','created_at','title']
+    search_fields = ('title',)
+    list_display_links = ['title']
+    model = models.QuizQuestionCollection
+    inlines=[
+        CollectionInline,
+    ]
 
 
 
