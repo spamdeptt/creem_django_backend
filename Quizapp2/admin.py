@@ -16,6 +16,8 @@ class SummerAdmin(SummernoteModelAdmin):
     summernote_fields = ('body',)
 class CreamCardsAdmin(admin.ModelAdmin):
     list_display = ("created_at","title","subject")
+    search_fields = ('title',)
+
 
 
 @admin.register(models.QuizQuestion)
