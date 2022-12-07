@@ -9,15 +9,10 @@ admin.site.index_title = 'Admin'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('playground/', include('playground.urls')),
-    path('store/', include('store.urls')),
-    path('quizapp/', include('Quizapp2.urls')),
-    path('snippets/', include('snippets3.urls')),
-    path('blog/', include('blog.urls'), name="blog"),
-    path('blog/api/', include('blog_api.urls'), name="blog_api"),
     path('api-auth/', include('rest_framework.urls')),
     path('__debug__/', include(debug_toolbar.urls)),
     path('summernote/', include('django_summernote.urls')),
+    path('quizapp/', include('Quizapp2.urls')),
 ]
 
 if settings.DEBUG:
