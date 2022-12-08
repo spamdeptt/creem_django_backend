@@ -58,22 +58,6 @@ class QuizQuestion(models.Model):
          verbose_name_plural = "Quiz Questions"
          ordering = ['subject']
 
-
-class CreamCardsTest(models.Model):    
-    created_at  = models.DateTimeField(null=True)
-    author = models.ForeignKey(Authors, models.SET_NULL, null=True, blank=True )
-    subject = models.ForeignKey(Subjects, models.SET_NULL, null=True, blank=True )
-    url = models.CharField(max_length=1500, null=True, blank=True)
-    title = models.CharField(max_length=500)
-    body = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.title}"
-
-    class Meta:
-         verbose_name_plural = "Cream Cards Test"
-
-
 class CreamCards(models.Model):
     created_at  = models.DateTimeField(null=True)
     author = models.ForeignKey(Authors, on_delete=models.SET_NULL, null=True, blank=True )

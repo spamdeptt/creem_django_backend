@@ -33,10 +33,10 @@ class QuizQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(models.QuizQuestionCollection) #https://stackoverflow.com/questions/43894232/displaying-both-sides-of-a-manytomany-relationship-in-django-admin
 class QuizQuestionCollectionAdmin(admin.ModelAdmin):
-    list_display= ['id','created_at','title']
+    list_display= ['title','id','created_at']
     search_fields = ('title',)
     list_display_links = ['title']
-    model = models.QuizQuestionCollection
+    # model = models.QuizQuestionCollection //this was removed and nothing happended so it was left removed
     inlines=[
         CollectionInline,
     ]
