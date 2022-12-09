@@ -1,14 +1,17 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
-from rest_framework.routers import SimpleRouter
+from rest_framework.routers import DefaultRouter
 
-router = SimpleRouter()
-router.register('creamcards', views.CreamCardsViewSet)
+router = DefaultRouter()
+router.register('creamcards', views.CreamCardsViewSet, basename='creamcards')
 router.register('questions', views.QuizQuestionsViewSet)
 router.register('q_collection', views.QuizQuestionsCollectionViewSet)
-router.register('ccfresh', views.FreshCreamCardsViewSet)
+#there is no point in exposing the questions list -- only detail view is to be used
+# so create a custom viewset like done in 4.4
 router.register('correct', views.QuizQuestionCorrectViewSet)
 router.register('incorrect', views.QuizQuestionIncorrectViewSet)
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+]
 

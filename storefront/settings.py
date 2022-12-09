@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django_quill',
     'django_summernote',     #https://www.youtube.com/watch?v=1QDW0cC8Ha8 (how to install summernote markdown editor)
     'Quizapp2',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -149,6 +150,7 @@ REST_FRAMEWORK = {
     ]
 }
 
+AUTH_USER_MODEL = 'core.User'
 
 # CORS_ALLOW_ALL_ORIGINS = False
 
