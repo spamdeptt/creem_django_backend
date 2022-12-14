@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib import admin
+from django.conf import settings
 
 class Authors(models.Model):
     author_name = models.CharField(max_length=255)
@@ -34,9 +36,9 @@ class QuizQuestionCollection(models.Model):
 
 class QuizQuestion(models.Model):
     created_at  = models.DateTimeField(null=True)
-    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE, null=True, blank=True, related_name="quiz_questions")
+    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE, null=True, blank=True)
     collection = models.ManyToManyField(QuizQuestionCollection, blank=True, related_name="collection_questions" )
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True, blank=True, related_name="quiz_questions")
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True, blank=True)
     preview_text = models.CharField(max_length=255)
     questionText = models.TextField()
     option_1 = models.CharField(max_length=510)
@@ -74,3 +76,30 @@ class CreamCards(models.Model):
          verbose_name_plural = "Cream Cards"
 
 
+class Customer(models.Model):
+    MEMBERSHIP_PREMIUM = 'P'
+    MEMBERSHIP_FREE = 'F'
+
+    MEMBERSHIP_CHOICES = [
+        (MEMBERSHIP_PREMIUM, 'Premium'),
+        (MEMBERSHIP_FREE, 'Free'),
+    ]
+    phone = models.CharField(max_length=255)
+    birth_date = models.DateField(null=True, blank=True)
+    membership = models.CharField(
+        max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_FREE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
+    
+    @admin.display(ordering='user__first_name')
+    def first_name(self):
+        return self.user.first_name
+    @admin.display(ordering='user__last_name')
+    def last_name(self):
+        return self.user.last_name
+
+    class Meta:
+        ordering = ['user__first_name', 'user__last_name']
+        # permissions =[('view_history','Can view history')]
