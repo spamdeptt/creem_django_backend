@@ -76,7 +76,7 @@ class CreamCards(models.Model):
          verbose_name_plural = "Cream Cards"
 
 
-class Customer(models.Model):
+class Student(models.Model):
     MEMBERSHIP_PREMIUM = 'P'
     MEMBERSHIP_FREE = 'F'
 

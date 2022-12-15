@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import QuizQuestionCollection, Authors, Subjects, Topic,CreamCards, QuizQuestion, Customer
+from django.db.models.aggregates import Count
+from .models import QuizQuestionCollection, Authors, Subjects, Topic,CreamCards, QuizQuestion, Student
 from django_summernote.admin import SummernoteModelAdmin
 # Register your models here.
 
@@ -34,6 +35,7 @@ class QuizQuestionAdmin(admin.ModelAdmin):
 admin.site.register(QuizQuestionCollection)
 
 
+
 #https://stackoverflow.com/questions/43894232/displaying-both-sides-of-a-manytomany-relationship-in-django-admin
 # @admin.register(models.QuizQuestionCollection) 
 # class QuizQuestionCollectionAdmin(admin.ModelAdmin):
@@ -46,7 +48,7 @@ admin.site.register(QuizQuestionCollection)
 #     ]
 
 
-@admin.register(Customer)
+@admin.register(Student)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name',  'membership']
     list_editable = ['membership']

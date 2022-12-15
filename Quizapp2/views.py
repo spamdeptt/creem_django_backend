@@ -1,17 +1,20 @@
-from .models import CreamCards, QuizQuestion, QuizQuestionCollection
-from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers
-from rest_framework import generics
+from .models import CreamCards, QuizQuestion, QuizQuestionCollection, Student
+from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers, StudentSerializer
+from .permissions import IsAdminOrReadOnly
+
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 
 from datetime import timedelta
 from django.utils import timezone
 from django.db.models import F
-
+from django.db.models.aggregates import Count
 
 class CreamCardsViewSet(ModelViewSet):
     serializer_class = CreamCardsSerializer
-
+    permission_classes = [IsAdminOrReadOnly]
     #can filter using delta from query (Mosh 3.10-filtering)
     def get_queryset(self): 
         queryset = CreamCards.objects.select_related('subject').select_related('author').all().order_by('-created_at')
@@ -21,16 +24,34 @@ class CreamCardsViewSet(ModelViewSet):
             queryset = CreamCards.objects.select_related('subject').select_related('author').filter(created_at__gte=some_day_last_week).order_by('-created_at') #https://stackoverflow.com/questions/11205096/how-to-retrieve-records-from-past-weeks-in-django
         return queryset
 
-
 class QuizQuestionsViewSet(ModelViewSet):
     queryset = QuizQuestion.objects.all()
     serializer_class = QuizQuestionSerializers
+    permission_classes = [IsAdminOrReadOnly]
 
 class QuizQuestionsCollectionViewSet(ModelViewSet):
     queryset = QuizQuestionCollection.objects.prefetch_related('collection_questions').all()
     serializer_class = QuizQuestionCollectionSerializers
+    permission_classes = [IsAdminOrReadOnly]
 
 
+class StudentViewSet(ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    permission_classes=[IsAdminUser]
+
+
+    @action(detail=False, methods=['GET','PUT'], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        (student, created) = Student.objects.get(user_id=request.user.id)
+        if request.method == 'GET':
+            serializer = StudentSerializer(student)
+            return Response(serializer.data) 
+        elif request.method == 'PUT':
+            serializer = StudentSerializer(student, data = request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
 
 

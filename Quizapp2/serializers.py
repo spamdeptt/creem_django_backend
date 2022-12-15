@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CreamCards, QuizQuestion, QuizQuestionCollection
+from .models import CreamCards, QuizQuestion, QuizQuestionCollection, Student
 
 
 class CreamCardsSerializer(serializers.ModelSerializer):
@@ -23,3 +23,10 @@ class QuizQuestionCollectionSerializers(serializers.ModelSerializer):  #https://
         fields = ['id','collection_questions']
     
     collection_questions = QuizQuestionSerializers(many=True, read_only=True)
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(read_only=True)
+    class Meta:
+        model = Student
+        fields = ['id','user_id','phone','birth_date','membership']
