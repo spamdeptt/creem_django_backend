@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    # 'rest_framework.authtoken',
     'djoser',
     'playground',
     'debug_toolbar',
@@ -55,6 +56,7 @@ INTERNAL_IPS = [
     '192.168.1.2',
     '192.168.1.3',
     '192.168.1.4',
+    '192.168.1.5',
     # ...
 ]
 
@@ -152,12 +154,15 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        
     ),
 }
 
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=1)
+   'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
+   'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
 }
 
 DJOSER ={
@@ -166,6 +171,7 @@ DJOSER ={
         'current_user': 'core.serializers.UserSerializer',
     }
 }
+
 
 AUTH_USER_MODEL = 'core.User'
 

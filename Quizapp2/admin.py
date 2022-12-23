@@ -1,18 +1,18 @@
 from django.contrib import admin
 from django.db.models.aggregates import Count
-from .models import QuizQuestionCollection, Authors, Subjects, Topic,CreamCards, QuizQuestion, Student
+from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student
 from django_summernote.admin import SummernoteModelAdmin
 # Register your models here.
 
-admin.site.register(Authors)
-admin.site.register(Subjects)
+admin.site.register(Author)
+admin.site.register(Subject)
 admin.site.register(Topic)
 
 class CollectionInline(admin.TabularInline):
     model = QuizQuestion.collection.through
 
 
-@admin.register(CreamCards)
+@admin.register(Creamcard)
 class SummerAdmin(SummernoteModelAdmin): 
     summernote_fields = ('body',)
 class CreamCardsAdmin(admin.ModelAdmin):
@@ -50,7 +50,7 @@ admin.site.register(QuizQuestionCollection)
 
 @admin.register(Student)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name',  'membership']
+    list_display = ['first_name', 'last_name','membership']
     list_editable = ['membership']
     list_per_page = 10
     list_select_related = ['user']

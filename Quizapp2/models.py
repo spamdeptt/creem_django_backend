@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.conf import settings
 
-class Authors(models.Model):
+class Author(models.Model):
     author_name = models.CharField(max_length=255)
 
     def __str__ (self):
@@ -12,7 +12,7 @@ class Authors(models.Model):
     class Meta:
          verbose_name_plural = "Authors"
 
-class Subjects(models.Model):
+class Subject(models.Model):
     subject_name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -22,7 +22,7 @@ class Subjects(models.Model):
          verbose_name_plural = "Subjects"
 
 class Topic(models.Model):
-    subject  = models.ForeignKey(Subjects, models.CASCADE, null=True, blank=True, related_name="topics")
+    subject  = models.ForeignKey(Subject, models.CASCADE, null=True, blank=True, related_name="topics")
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -36,7 +36,7 @@ class QuizQuestionCollection(models.Model):
 
 class QuizQuestion(models.Model):
     created_at  = models.DateTimeField(null=True)
-    subject = models.ForeignKey(Subjects, on_delete=models.CASCADE, null=True, blank=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True, blank=True)
     collection = models.ManyToManyField(QuizQuestionCollection, blank=True, related_name="collection_questions" )
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True, blank=True)
     preview_text = models.CharField(max_length=255)
@@ -60,10 +60,10 @@ class QuizQuestion(models.Model):
          verbose_name_plural = "Quiz Questions"
          ordering = ['subject']
 
-class CreamCards(models.Model):
+class Creamcard(models.Model):
     created_at  = models.DateTimeField(null=True)
-    author = models.ForeignKey(Authors, on_delete=models.SET_NULL, null=True, blank=True )
-    subject = models.ForeignKey(Subjects, on_delete=models.SET_NULL, null=True, blank=True )
+    author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True, blank=True )
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True )
     ImageURL = models.CharField(max_length=1500)
     title = models.CharField(max_length=500)
     body = models.TextField(blank=True, null=True)
@@ -74,7 +74,6 @@ class CreamCards(models.Model):
 
     class Meta:
          verbose_name_plural = "Cream Cards"
-
 
 class Student(models.Model):
     MEMBERSHIP_PREMIUM = 'P'
@@ -89,6 +88,7 @@ class Student(models.Model):
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_FREE)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    saved = models.ManyToManyField(Creamcard,blank=True, related_name='saved_by')
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
