@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.db.models.aggregates import Count
-from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student
+from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student, Accuracy
 from django_summernote.admin import SummernoteModelAdmin
 # Register your models here.
 
 admin.site.register(Author)
 admin.site.register(Subject)
 admin.site.register(Topic)
+
 
 class CollectionInline(admin.TabularInline):
     model = QuizQuestion.collection.through
@@ -47,14 +48,18 @@ admin.site.register(QuizQuestionCollection)
 #         CollectionInline,
 #     ]
 
+@admin.register(Accuracy)
+class AccuracyAdmin(admin.ModelAdmin):
+    list_display = ['user','total','percentage']
+
 
 @admin.register(Student)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name','membership']
+    list_display = ['id','username','first_name','membership','date_joined']
     list_editable = ['membership']
     list_per_page = 10
     list_select_related = ['user']
-    ordering = ['user__first_name', 'user__last_name']
+    ordering = ['user__first_name']
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
 
     # def get_queryset(self, request):

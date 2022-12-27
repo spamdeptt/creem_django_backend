@@ -1,17 +1,13 @@
 from rest_framework import serializers
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Subject
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Accuracy
+from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-
-# class SubjectSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Subject
-#         fields = ['subject_name']
 
 class CreamCardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Creamcard
         fields = ['id','created_at','subject','ImageURL','title','body','related_quiz']
-    # subject = serializers.StringRelatedField
+    subject = serializers.StringRelatedField()
 
 class QuizQuestionSerializers(serializers.ModelSerializer): #https://stackoverflow.com/a/33182227/3344514
     # collection = serializers.PrimaryKeyRelatedField(queryset=QuizQuestionCollection.objects.all(), many=True)
@@ -30,28 +26,65 @@ class QuizQuestionCollectionSerializers(serializers.ModelSerializer):  #https://
 
 
 
+# class AccuracySerializer(serializers.ModelSerializer):
+#     id = serializers.IntegerField(read_only=True)
+#     class Meta:
+#         model = Accuracy
+#         fields = ['id','correct_attempt','incorrect_attempt']
+
+class AccuracySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    class Meta:
+        model = Accuracy
+        fields = ['id','correct_attempt','incorrect_attempt']
+
 class StudentSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
+    accuracy = AccuracySerializer()
     class Meta:
         model = Student
-        fields = ['id','user_id','phone','birth_date','membership','saved']
+        fields = ['id','user_id','date_joined','phone','birth_date','membership','saved_cards','accuracy']
 
 
+class StudentAccuracySerializer(WritableNestedModelSerializer):
+    # user_id = serializers.IntegerField(read_only=True)
+    accuracy = AccuracySerializer()
+    class Meta:
+        model = Student
+        fields = ['id','user_id','accuracy']
+
+
+
+
+
+#1
 class SavedCreamCardsSerializer(serializers.ModelSerializer):
     subject = serializers.StringRelatedField()
     class Meta:
         model = Creamcard
         fields = ['id','created_at','subject','ImageURL','title','body']
-    
 
-
-class StudentSavedSerializer(serializers.ModelSerializer):
+#2
+class StudentSavedCardsPutSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
-    saved = SavedCreamCardsSerializer(many=True)
-
     class Meta:
         model = Student
-        fields = ['user_id','saved']
+        fields = ['user_id','saved_cards']
+
+#3
+class StudentSavedCardsGetSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(read_only=True)
+    saved_cards = SavedCreamCardsSerializer(many=True)
+    class Meta:
+        model = Student
+        fields = ['user_id','saved_cards']
 
 
+# class StudentSavedQuestionsSerializer(serializers.ModelSerializer):
+#     user_id = serializers.IntegerField(read_only=True)
+#     saved_questions = QuizQuestionSerializers(many=True)
+
+#     class Meta:
+#         model = Student
+#         fields = ['user_id','saved_questions']
 

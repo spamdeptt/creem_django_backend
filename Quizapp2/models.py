@@ -75,6 +75,33 @@ class Creamcard(models.Model):
     class Meta:
          verbose_name_plural = "Cream Cards"
 
+class Accuracy(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    correct_attempt = models.IntegerField(default=1)
+    incorrect_attempt = models.IntegerField(default=1)
+    total = models.IntegerField(default=2)
+    percentage = models.DecimalField(decimal_places=2, max_digits=10, default=50)
+
+    @property
+    def get_total(self):
+        return self.correct_attempt + self.incorrect_attempt
+
+    @property
+    def get_percentage(self):
+        return (self.correct_attempt/(self.correct_attempt+self.incorrect_attempt))*100
+
+    def save(self, *args, **kwargs):
+        self.percentage = self.get_percentage
+        self.total = self.get_total
+        super(Accuracy, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user}"
+
+    class Meta:
+         verbose_name_plural = "Accuracy"
+
+
 class Student(models.Model):
     MEMBERSHIP_PREMIUM = 'P'
     MEMBERSHIP_FREE = 'F'
@@ -83,12 +110,15 @@ class Student(models.Model):
         (MEMBERSHIP_PREMIUM, 'Premium'),
         (MEMBERSHIP_FREE, 'Free'),
     ]
-    phone = models.CharField(max_length=255)
+    phone = models.CharField(max_length=255, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_FREE)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    saved = models.ManyToManyField(Creamcard,blank=True, related_name='saved_by')
+    saved_cards = models.ManyToManyField(Creamcard,blank=True, related_name='saved_by')
+    # saved_questions = models.ManyToManyField(QuizQuestion,blank=True, related_name='saved_by')
+    accuracy = models.ForeignKey(Accuracy, on_delete=models.CASCADE)
+    date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
@@ -96,10 +126,12 @@ class Student(models.Model):
     @admin.display(ordering='user__first_name')
     def first_name(self):
         return self.user.first_name
-    @admin.display(ordering='user__last_name')
-    def last_name(self):
-        return self.user.last_name
+    @admin.display(ordering='user__username')
+    def username(self):
+        return self.user.username
 
     class Meta:
         ordering = ['user__first_name', 'user__last_name']
         # permissions =[('view_history','Can view history')]
+
+

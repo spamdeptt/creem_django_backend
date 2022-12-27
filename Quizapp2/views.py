@@ -1,5 +1,5 @@
 from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student
-from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers, StudentSerializer, StudentSavedSerializer
+from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers, StudentSerializer, StudentSavedCardsGetSerializer,StudentSavedCardsPutSerializer, StudentAccuracySerializer
 from .permissions import IsAdminOrReadOnly
 
 from rest_framework.response import Response
@@ -42,7 +42,6 @@ class StudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
     permission_classes=[IsAdminUser]
 
-
     @action(detail=False, methods=['GET','PUT'], permission_classes=[IsAuthenticated])
     def me(self, request):
         (student) = Student.objects.get(user_id=request.user.id)
@@ -54,19 +53,39 @@ class StudentViewSet(ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
-
-
     @action(detail=False, methods=['GET','PUT'], permission_classes=[IsAuthenticated])
-    def saved(self, request):
-        (student) = Student.objects.prefetch_related('saved__subject').get(user_id=request.user.id)
+    def saved_cards(self, request):
+        (student) = Student.objects.prefetch_related('saved_cards__subject').get(user_id=request.user.id)
         if request.method == 'GET':
-            serializer = StudentSavedSerializer(student)
+            serializer = StudentSavedCardsGetSerializer(student)
             return Response(serializer.data) 
         elif request.method == 'PUT':
-            serializer = StudentSerializer(student, data = request.data)
+            serializer = StudentSavedCardsPutSerializer(student, data = request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
+    @action(detail=False, methods=['GET','PUT'], permission_classes=[IsAuthenticated])
+    def accuracy(self, request):
+        (student) = Student.objects.select_related('accuracy').get(user_id=request.user.id)
+        if request.method == 'GET':
+            serializer = StudentAccuracySerializer(student)
+            return Response(serializer.data) 
+        elif request.method == 'PUT':
+            serializer = StudentAccuracySerializer(student, data = request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+    # @action(detail=False, methods=['GET','PUT'], permission_classes=[IsAuthenticated])
+    # def saved_questions(self, request):
+    #     (student) = Student.objects.prefetch_related('saved_questions__subject').get(user_id=request.user.id)
+    #     if request.method == 'GET':
+    #         serializer = StudentSavedQuestionsSerializer(student)
+    #         return Response(serializer.data) 
+    #     elif request.method == 'PUT':
+    #         serializer = StudentSerializer(student, data = request.data)
+    #         serializer.is_valid(raise_exception=True)
+    #         serializer.save()
+    #         return Response(serializer.data)
 
 
 
