@@ -11,7 +11,7 @@ def create_customer_for_new_user(sender,  **kwargs):
 
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+@receiver(post_save, sender=Student)
 def create_accuracy_for_new_student(sender,  **kwargs):
     if kwargs['created']:
-        Accuracy.objects.create(user=kwargs['instance'])
+        Accuracy.objects.create(student=kwargs['instance'])

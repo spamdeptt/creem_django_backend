@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Accuracy
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 
@@ -8,6 +8,12 @@ class CreamCardsSerializer(serializers.ModelSerializer):
         model = Creamcard
         fields = ['id','created_at','subject','ImageURL','title','body','related_quiz']
     subject = serializers.StringRelatedField()
+
+class TrendingTopicsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trending
+        fields = ['updated_at','topics']
+
 
 class QuizQuestionSerializers(serializers.ModelSerializer): #https://stackoverflow.com/a/33182227/3344514
     # collection = serializers.PrimaryKeyRelatedField(queryset=QuizQuestionCollection.objects.all(), many=True)
@@ -32,29 +38,26 @@ class QuizQuestionCollectionSerializers(serializers.ModelSerializer):  #https://
 #         model = Accuracy
 #         fields = ['id','correct_attempt','incorrect_attempt']
 
-class AccuracySerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
-    class Meta:
-        model = Accuracy
-        fields = ['id','correct_attempt','incorrect_attempt']
+# class AccuracySerializer(serializers.ModelSerializer):
+#     id = serializers.IntegerField(read_only=True)
+#     class Meta:
+#         model = Accuracy
+#         fields = ['id','correct_attempt','incorrect_attempt']
 
 class StudentSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
-    accuracy = AccuracySerializer()
+    # accuracy = AccuracySerializer()
     class Meta:
         model = Student
-        fields = ['id','user_id','date_joined','phone','birth_date','membership','saved_cards','accuracy']
+        fields = ['id','user_id','date_joined','phone','birth_date','membership','saved_cards']
 
 
 class StudentAccuracySerializer(WritableNestedModelSerializer):
     # user_id = serializers.IntegerField(read_only=True)
-    accuracy = AccuracySerializer()
+    # accuracy = AccuracySerializer()
     class Meta:
         model = Student
         fields = ['id','user_id','accuracy']
-
-
-
 
 
 #1

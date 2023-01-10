@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 from django.conf import settings
+from datetime import datetime, timedelta
 
 class Author(models.Model):
     author_name = models.CharField(max_length=255)
@@ -75,8 +76,53 @@ class Creamcard(models.Model):
     class Meta:
          verbose_name_plural = "Cream Cards"
 
-class Accuracy(models.Model):
+
+class Student(models.Model):
+    MEMBERSHIP_PREMIUM = 'P'
+    MEMBERSHIP_FREE = 'F'
+
+    MEMBERSHIP_CHOICES = [
+        (MEMBERSHIP_PREMIUM, 'Premium'),
+        (MEMBERSHIP_FREE, 'Free'),
+    ]
+    phone = models.CharField(max_length=255, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    membership = models.CharField(
+        max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_FREE)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    saved_cards = models.ManyToManyField(Creamcard,blank=True, related_name='saved_by')
+    # saved_questions = models.ManyToManyField(QuizQuestion,blank=True, related_name='saved_by')
+    # accuracy = models.ForeignKey(Accuracy, on_delete=models.CASCADE)
+    date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    last_access = models.DateTimeField(null=True, blank=True)
+    streak = models.IntegerField(default=0)
+
+    def update_streak(self):
+        current = datetime.now()
+        delta = current - self.last_access
+
+        if delta > timedelta(1):
+            self.streak = 0
+        return True
+
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
+    
+    @admin.display(ordering='user__first_name')
+    def first_name(self):
+        return self.user.first_name
+    @admin.display(ordering='user__username')
+    def username(self):
+        return self.user.username
+
+    class Meta:
+        ordering = ['user__first_name', 'user__last_name']
+        # permissions =[('view_history','Can view history')]
+
+
+class Accuracy(models.Model):
+    # user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    student = models.OneToOneField(Student,on_delete=models.CASCADE, blank=True, null=True)
     correct_attempt = models.IntegerField(default=1)
     incorrect_attempt = models.IntegerField(default=1)
     total = models.IntegerField(default=2)
@@ -96,42 +142,18 @@ class Accuracy(models.Model):
         super(Accuracy, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user}"
+        return f"{self.student}"
 
     class Meta:
          verbose_name_plural = "Accuracy"
 
 
-class Student(models.Model):
-    MEMBERSHIP_PREMIUM = 'P'
-    MEMBERSHIP_FREE = 'F'
-
-    MEMBERSHIP_CHOICES = [
-        (MEMBERSHIP_PREMIUM, 'Premium'),
-        (MEMBERSHIP_FREE, 'Free'),
-    ]
-    phone = models.CharField(max_length=255, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    membership = models.CharField(
-        max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_FREE)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    saved_cards = models.ManyToManyField(Creamcard,blank=True, related_name='saved_by')
-    # saved_questions = models.ManyToManyField(QuizQuestion,blank=True, related_name='saved_by')
-    accuracy = models.ForeignKey(Accuracy, on_delete=models.CASCADE)
-    date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+class Trending(models.Model):
+    updated_at = models.DateTimeField(auto_now=True)
+    topics = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name}'
+        return f"{self.updated_at}"
     
-    @admin.display(ordering='user__first_name')
-    def first_name(self):
-        return self.user.first_name
-    @admin.display(ordering='user__username')
-    def username(self):
-        return self.user.username
-
     class Meta:
-        ordering = ['user__first_name', 'user__last_name']
-        # permissions =[('view_history','Can view history')]
-
-
+         verbose_name_plural = "Trending Topics"

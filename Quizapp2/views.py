@@ -1,5 +1,5 @@
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student
-from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers, StudentSerializer, StudentSavedCardsGetSerializer,StudentSavedCardsPutSerializer, StudentAccuracySerializer
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending
+from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers, StudentSerializer, StudentSavedCardsGetSerializer,StudentSavedCardsPutSerializer, StudentAccuracySerializer, TrendingTopicsSerializer
 from .permissions import IsAdminOrReadOnly
 
 from rest_framework.response import Response
@@ -88,7 +88,10 @@ class StudentViewSet(ModelViewSet):
     #         return Response(serializer.data)
 
 
-
+class TrendingTopicsViewSet(ModelViewSet):
+    queryset = Trending.objects.all()
+    serializer_class = TrendingTopicsSerializer
+    permission_classes = [IsAdminOrReadOnly]    
 
 
 #-------- 

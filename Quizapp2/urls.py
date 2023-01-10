@@ -11,6 +11,7 @@ router.register('q_collection', views.QuizQuestionsCollectionViewSet)
 # so create a custom viewset like done in 4.4
 router.register('correct', views.QuizQuestionCorrectViewSet)
 router.register('incorrect', views.QuizQuestionIncorrectViewSet)
+router.register('trending', views.TrendingTopicsViewSet)
 
 
 urlpatterns = [
