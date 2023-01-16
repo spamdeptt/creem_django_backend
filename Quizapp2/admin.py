@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.db.models.aggregates import Count
-from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student, Accuracy, Trending
+from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student, Accuracy, Trending, FLTCollection
 from django_summernote.admin import SummernoteModelAdmin
 # Register your models here.
 
 admin.site.register(Author)
 admin.site.register(Subject)
 admin.site.register(Topic)
+admin.site.register(FLTCollection)
 # admin.site.register(Trending)
 
 
@@ -81,3 +82,4 @@ class CustomerAdmin(admin.ModelAdmin):
     #     return super().get_queryset(request).annotate(
     #         orders_count=Count('order')
     #     )
+

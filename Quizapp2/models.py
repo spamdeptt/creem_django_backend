@@ -32,9 +32,17 @@ class Topic(models.Model):
 class QuizQuestionCollection(models.Model):
     created_at  = models.DateField(auto_now_add=True, blank=True, null=True)
     title = models.CharField(max_length=255)
+    subject = models.CharField(max_length=255,blank=True, null=True)
     def __str__(self):
         return self.title
-    
+
+class FLTCollection(models.Model):
+    title = models.CharField(max_length=255,blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    tests = models.ManyToManyField(QuizQuestionCollection)
+
+    def __str__(self):
+        return f"{self.title}"
 
 
 class QuizQuestion(models.Model):

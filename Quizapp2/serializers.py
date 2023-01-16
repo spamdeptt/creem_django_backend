@@ -1,6 +1,23 @@
 from rest_framework import serializers
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending, FLTCollection
 from drf_writable_nested.serializers import WritableNestedModelSerializer
+
+class QuizQuestionSerializerSimple(serializers.ModelSerializer):
+    # count = serializers.SerializerMethodField('get_count')
+    class Meta:
+        model = QuizQuestionCollection
+        # fields = ['id','title','subject','count']
+        fields = ['id','title','subject']
+    
+    # def get_count(self, obj):
+    #     return QuizQuestionCollection.objects.all().count()
+
+class FLTCollectionSerializer(serializers.ModelSerializer):
+    tests = QuizQuestionSerializerSimple(many=True, read_only=True)
+    class Meta:
+        model = FLTCollection
+        fields = ['id','title','description','tests']
+
 
 
 class CreamCardsSerializer(serializers.ModelSerializer):
