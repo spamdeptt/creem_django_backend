@@ -31,15 +31,24 @@ class TrendingAdmin(admin.ModelAdmin):
 @admin.register(QuizQuestion)
 class QuizQuestionAdmin(admin.ModelAdmin):
     list_display= ['preview_text','subject','id','get_collections']
-    list_filter = ('subject', )
+    list_filter = ('subject','collection')
     list_display_links = ['preview_text']
     search_fields = ('preview_text',)
+    list_select_related=['subject']
     
     def get_collections(self, instance):
         return [collection.title for collection in instance.collection.all()]
+    
+    def get_queryset(self, request):
+        queryset = QuizQuestion.objects.prefetch_related('collection')
+        return queryset
 
 
-admin.site.register(QuizQuestionCollection)
+@admin.register(QuizQuestionCollection)
+class QuizQuestionCollectionAdmin(admin.ModelAdmin):
+    list_display= ['id','created_at','title']
+
+
 
 
 

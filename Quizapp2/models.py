@@ -34,6 +34,8 @@ class QuizQuestionCollection(models.Model):
     title = models.CharField(max_length=255)
     def __str__(self):
         return self.title
+    
+
 
 class QuizQuestion(models.Model):
     created_at  = models.DateTimeField(null=True)
@@ -94,17 +96,7 @@ class Student(models.Model):
     # saved_questions = models.ManyToManyField(QuizQuestion,blank=True, related_name='saved_by')
     # accuracy = models.ForeignKey(Accuracy, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    last_access = models.DateTimeField(null=True, blank=True)
-    streak = models.IntegerField(default=0)
-
-    def update_streak(self):
-        current = datetime.now()
-        delta = current - self.last_access
-
-        if delta > timedelta(1):
-            self.streak = 0
-        return True
-
+    
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
     
