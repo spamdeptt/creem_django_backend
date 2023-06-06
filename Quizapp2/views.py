@@ -1,5 +1,5 @@
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending, FLTCollection
-from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers, StudentSerializer, StudentSavedCardsGetSerializer,StudentSavedCardsPutSerializer, StudentAccuracySerializer, TrendingTopicsSerializer, FLTCollectionSerializer
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending, FLTCollection, TrendingArchive
+from .serializers import CreamCardsSerializer,QuizQuestionSerializers, QuizQuestionCollectionSerializers, StudentSerializer, StudentSavedCardsGetSerializer,StudentSavedCardsPutSerializer, StudentAccuracySerializer, TrendingTopicsSerializer, FLTCollectionSerializer, TrendingArchiveSerializer
 from .permissions import IsAdminOrReadOnly
 
 from rest_framework.response import Response
@@ -91,6 +91,11 @@ class StudentViewSet(ModelViewSet):
 class TrendingTopicsViewSet(ModelViewSet):
     queryset = Trending.objects.all()
     serializer_class = TrendingTopicsSerializer
+    permission_classes = [IsAdminOrReadOnly]    
+
+class TrendingArchiveViewSet(ModelViewSet):
+    queryset = TrendingArchive.objects.all()
+    serializer_class = TrendingArchiveSerializer
     permission_classes = [IsAdminOrReadOnly]    
 
 class FLTCollectionViewSet(ModelViewSet):
