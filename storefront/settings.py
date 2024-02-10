@@ -2,6 +2,9 @@ from datetime import timedelta
 from pathlib import Path
 import os
 
+from oauth2_provider import settings as oauth2_settings
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -14,8 +17,8 @@ SECRET_KEY = 'django-insecure-hs6j037urx6iav+7#10%-vu4l4f5@@-1_zo)oft4g7$vf2$jmp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.2','192.168.1.4','192.168.1.6','192.168.1.5','192.168.1.3','192.168.1.7',]
-
+# ALLOWED_HOSTS = ['192.168.1.3','192.168.1.16','192.168.1.2','192.168.1.4','192.168.1.6','192.168.1.5','192.168.1.11','192.168.1.7','192.168.1.9','192.168.230.169']
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
@@ -35,6 +38,9 @@ INSTALLED_APPS = [
     'django_summernote',     #https://www.youtube.com/watch?v=1QDW0cC8Ha8 (how to install summernote markdown editor)
     'Quizapp2',
     'core',
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
 INTERNAL_IPS = [
@@ -59,6 +66,13 @@ INTERNAL_IPS = [
     '192.168.1.5',
     '192.168.1.6',
     '192.168.1.7',
+    '192.168.1.11',
+    '192.168.1.16',
+    '192.168.230.169',
+    '192.168.0.197',
+    'localhost',
+    'gilheri.local',
+
     # ...
 ]
 
@@ -75,6 +89,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -96,6 +112,18 @@ DATABASES = {
     }
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT= 587
+EMAIL_HOST_USER = 'ccgilheri@gmail.com'
+EMAIL_HOST_PASSWORD = 'mfnf eiku gnyi vesl'
+EMAIL_USE_TLS = True
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'drf_social_oauth2.backends.DjangoOAuth2',
+    'django.contrib.auth.backends.ModelBackend'
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -157,6 +185,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+        'drf_social_oauth2.authentication.SocialAuthentication',
         
     ),
 }
@@ -167,7 +197,48 @@ SIMPLE_JWT = {
    'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
 }
 
+# DJOSER ={
+#     'SERIALIZERS':{
+#         'user_create': 'core.serializers.UserCreateSerializer',
+#         'current_user': 'core.serializers.UserSerializer',
+#     }
+# }
+
+
+AUTH_USER_MODEL = 'core.User'
+
+# CORS_ALLOW_CREDENTIALS = True
+
+    
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOW_ALL_ORIGINS = False
+# CORS_ALLOWED_ORIGINS = [
+#     "http://192.168.1.11:8081",
+#     "http://localhost:8081",
+#     # Add other origins as needed
+# ]
+
+
+
 DJOSER ={
+    # 'LOGIN_FIELD':'email',
+    'USER_CREATE_PASSWORD_RETYPE':True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND':True,
+    'SEND_CONFIRMATION_EMAIL':True,
+    'SET_USERNAME_RETYPE': True,
+    'SET_PASSWORD_RETYPE':True,
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'email/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL':'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
+    # 'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://localhost:8000/auth/o/google-oauth2'],
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://gilherii.com:8000/auth/o/google-oauth2'],
+    # 'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://192.168.1.11:8000'],
+    # 'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://gilherii.com:8000'],
     'SERIALIZERS':{
         'user_create': 'core.serializers.UserCreateSerializer',
         'current_user': 'core.serializers.UserSerializer',
@@ -175,12 +246,18 @@ DJOSER ={
 }
 
 
-AUTH_USER_MODEL = 'core.User'
+#NEW django-djoser-social-auth > Auth System
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "253699303495-kkobdpitod7prsj5mgso840f7vuun2db.apps.googleusercontent.com"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "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"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid'
+]
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
+
+# expires in 6 months
+oauth2_settings.DEFAULTS['ACCESS_TOKEN_EXPIRE_SECONDS'] = 1.577e7
 
 
-# CORS_ALLOW_ALL_ORIGINS = False
-
-# CORS_ALLOWED_ORIGINS = [
-#     "http://192.168.1.5:19000",
-# ]
 

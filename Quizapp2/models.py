@@ -44,6 +44,9 @@ class FLTCollection(models.Model):
     def __str__(self):
         return f"{self.title}"
 
+    class Meta:
+        verbose_name_plural = "FLT Collections"
+
 
 class QuizQuestion(models.Model):
     created_at  = models.DateTimeField(null=True)
@@ -101,7 +104,7 @@ class Student(models.Model):
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_FREE)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     saved_cards = models.ManyToManyField(Creamcard,blank=True, related_name='saved_by')
-    # saved_questions = models.ManyToManyField(QuizQuestion,blank=True, related_name='saved_by')
+    # saved_questions = mode  ls.ManyToManyField(QuizQuestion,blank=True, related_name='saved_by')
     # accuracy = models.ForeignKey(Accuracy, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     
@@ -157,3 +160,63 @@ class Trending(models.Model):
     
     class Meta:
          verbose_name_plural = "Trending Topics"
+
+
+class TrendingArchive(models.Model):
+    JANUARY ='JAN'
+    FEBRUARY = 'FEB'
+    MARCH = 'MAR'
+    APRIL = 'APR'
+    MAY = 'MAY'
+    JUNE = 'JUN'
+    JULY = 'JUL'
+    AUGUST = 'AUG'
+    SEPTEMBER = 'SEP'
+    OCTOBER = 'OCT'
+    NOVEMBER = 'NOV'
+    # MONTH_CHOICES = [
+    #     ('JAN', 'January'),
+    #     ('FEB', 'February'),
+    #     ('MAR', 'March'),
+    #     ('APR', 'April'),
+    #     ('MAY', 'May'),
+    #     ('JUN', 'June'),
+    #     ('JUL', 'July'),
+    #     ('AUG', 'August'),
+    #     ('SEP', 'September'),
+    #     ('OCT', 'October'),
+    #     ('NOV', 'November'),
+    #     ('DEC', 'December'),
+    # ]
+    MONTH_CHOICES = [
+        ('January', 'January'),
+        ('February', 'February'),
+        ('March', 'March'),
+        ('April', 'April'),
+        ('May', 'May'),
+        ('June', 'June'),
+        ('July', 'July'),
+        ('August', 'August'),
+        ('September', 'September'),
+        ('October', 'October'),
+        ('November', 'November'),
+        ('December', 'December'),
+    ]
+    YEAR_CHOICES = [
+        ('2021', '2021'),
+        ('2022', '2022'),
+        ('2023', '2023'),
+    ]
+    created_at  = models.DateField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+    year = models.CharField(choices=YEAR_CHOICES, default=2023, max_length=4)
+    month = models.CharField(choices=MONTH_CHOICES, max_length=12)
+    topics = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.month} {self.year}"
+
+    class Meta:
+         verbose_name_plural = "Trending Topics Archives"
+         ordering = ['-created_at']
+    

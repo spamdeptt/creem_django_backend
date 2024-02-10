@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending, FLTCollection
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending,TrendingArchive, FLTCollection 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 class QuizQuestionSerializerSimple(serializers.ModelSerializer):
@@ -31,6 +31,11 @@ class TrendingTopicsSerializer(serializers.ModelSerializer):
         model = Trending
         fields = ['updated_at','topics']
 
+class TrendingArchiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrendingArchive
+        # fields = '__all__'
+        fields = ['id','year','month','topics']
 
 class QuizQuestionSerializers(serializers.ModelSerializer): #https://stackoverflow.com/a/33182227/3344514
     # collection = serializers.PrimaryKeyRelatedField(queryset=QuizQuestionCollection.objects.all(), many=True)

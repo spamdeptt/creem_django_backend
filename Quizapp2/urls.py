@@ -12,6 +12,7 @@ router.register('q_collection', views.QuizQuestionsCollectionViewSet)
 router.register('correct', views.QuizQuestionCorrectViewSet)
 router.register('incorrect', views.QuizQuestionIncorrectViewSet)
 router.register('trending', views.TrendingTopicsViewSet)
+router.register('trendingarchive', views.TrendingArchiveViewSet)
 router.register('fltcollections', views.FLTCollectionViewSet)
 
 
