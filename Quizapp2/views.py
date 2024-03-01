@@ -100,6 +100,11 @@ class TrendingArchiveViewSet(ModelViewSet):
     # permission_classes = [IsAdminOrReadOnly]    
     permission_classes = [IsAuthenticated]    
 
+class TrendingArchiveViewSet(ModelViewSet):
+    queryset = TrendingArchive.objects.all()
+    serializer_class = TrendingArchiveSerializer
+    permission_classes = [IsAdminOrReadOnly]    
+
 class FLTCollectionViewSet(ModelViewSet):
     queryset = FLTCollection.objects.all()
     serializer_class = FLTCollectionSerializer
