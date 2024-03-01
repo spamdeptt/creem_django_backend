@@ -107,6 +107,7 @@ class Student(models.Model):
     # saved_questions = mode  ls.ManyToManyField(QuizQuestion,blank=True, related_name='saved_by')
     # accuracy = models.ForeignKey(Accuracy, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    # questions_attempted = models.PositiveIntegerField()
     
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'

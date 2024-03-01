@@ -87,7 +87,7 @@ class SavedCreamCardsSerializer(serializers.ModelSerializer):
     subject = serializers.StringRelatedField()
     class Meta:
         model = Creamcard
-        fields = ['id','created_at','subject','ImageURL','title','body']
+        fields = ['id','created_at','subject','ImageURL','title','body','related_quiz']
 
 #2
 class StudentSavedCardsPutSerializer(serializers.ModelSerializer):
