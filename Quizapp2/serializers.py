@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending,TrendingArchive, FLTCollection 
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending,TrendingArchive, FLTCollection, BlogCardButton
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 class QuizQuestionSerializerSimple(serializers.ModelSerializer):
@@ -18,13 +18,21 @@ class FLTCollectionSerializer(serializers.ModelSerializer):
         model = FLTCollection
         fields = ['id','title','description','tests']
 
-
-
 class CreamCardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Creamcard
         fields = ['id','created_at','subject','ImageURL','title','body','related_quiz']
     subject = serializers.StringRelatedField()
+
+class CreamCardIDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Creamcard
+        fields = ['id']
+
+class BlogCardButtonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogCardButton
+        fields = ['ImageURL','title','body']
 
 class TrendingTopicsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -68,10 +76,12 @@ class QuizQuestionCollectionSerializers(serializers.ModelSerializer):  #https://
 
 class StudentSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
+    # accuracy_score = serializers.DecimalField(max_digits=5, decimal_places=2, read_only=True)
     # accuracy = AccuracySerializer()
     class Meta:
         model = Student
-        fields = ['id','user_id','date_joined','phone','birth_date','membership','saved_cards']
+        # fields = ['id','user_id','date_joined','phone','birth_date','membership','saved_cards','accuracy_score','last_updated','correct_incorrect_data']
+        fields = ['id','user_id','date_joined','phone','birth_date','membership','saved_cards','correct_incorrect_data', 'accuracy_score', 'cards_read']
 
 
 class StudentAccuracySerializer(WritableNestedModelSerializer):

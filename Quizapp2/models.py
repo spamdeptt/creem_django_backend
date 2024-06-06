@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.conf import settings
 from datetime import datetime, timedelta
+from django.utils import timezone
+
+
 
 class Author(models.Model):
     author_name = models.CharField(max_length=255)
@@ -89,6 +92,17 @@ class Creamcard(models.Model):
     class Meta:
          verbose_name_plural = "Cream Cards"
 
+class BlogCardButton(models.Model):
+    created_at  = models.DateTimeField(null=True)
+    ImageURL = models.CharField(max_length=1500)
+    title = models.CharField(max_length=500)
+    body = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.title}"
+
+    class Meta:
+         verbose_name_plural = "Blog Button Card"
 
 class Student(models.Model):
     MEMBERSHIP_PREMIUM = 'P'
@@ -108,7 +122,77 @@ class Student(models.Model):
     # accuracy = models.ForeignKey(Accuracy, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     # questions_attempted = models.PositiveIntegerField()
+    # accuracy_score = models.DecimalField(max_digits=5, decimal_places=2)  # Example: 99.50
+    # last_updated = models.DateTimeField(default=timezone.now,blank=True, null=True)
+    # correct_attempts_count = models.PositiveIntegerField(default=0)
+    # incorrect_attempts_count = models.PositiveIntegerField(default=0)
+    correct_incorrect_data = models.CharField(max_length=20, default='1,2,3')  # Adjust max_length as per your requirement
+    accuracy_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    cards_read = models.PositiveIntegerField(default=0)
+
+
+    def calculate_accuracy_score(self):
+        correct, incorrect, total_attempts = map(int, self.correct_incorrect_data.split(','))
+
+        if total_attempts > 0:
+            # Calculate the simple accuracy ratio (correct attempts / total attempts)
+            simple_ratio = correct / (correct + incorrect)
+            # Calculate the ratio of attempted questions to total questions attempted
+            total_ratio = (correct + incorrect) / total_attempts
+            # Adjust the accuracy score by multiplying the simple ratio by the total ratio
+            accuracy = simple_ratio * total_ratio * 100
+        else:
+            accuracy = 0
+        
+        accuracy = round(accuracy, 2)
+        return accuracy
     
+    # def calculate_accuracy_score(self):
+    #     data_parts = self.correct_incorrect_data.split(',')
+    #     correct = int(data_parts[0])
+    #     incorrect = int(data_parts[1])
+    #     # correct, incorrect = map(int, self.correct_incorrect_data.split(','))
+    #     total_attempts = correct + incorrect
+    #     if total_attempts > 0:
+    #         accuracy = (correct / total_attempts) * 100
+    #     else:
+    #         accuracy = 0
+    #     accuracy = round(accuracy, 2)
+    #     return accuracy
+
+
+    def accuracy_score_changed(self):
+        return self.pk is None or self.accuracy_score != self.__class__.objects.get(pk=self.pk).accuracy_score
+
+    def get_correct_incorrect_data_as_tuple(self):
+        """
+        This method converts the stored string to a tuple of integers.
+        """
+        if self.correct_incorrect_data:
+            return tuple(map(int, self.correct_incorrect_data.split(',')))
+        else:
+            return None
+
+    def set_correct_incorrect_data_as_tuple(self, coord_tuple):
+        """
+        This method converts the tuple of integers to a string and saves it.
+        """
+        self.correct_incorrect_data = ','.join(map(str, coord_tuple))
+
+    correct_incorrect_data_tuple = property(get_correct_incorrect_data_as_tuple, set_correct_incorrect_data_as_tuple)
+
+
+    def save(self, *args, **kwargs):
+        if not self.accuracy_score_changed():
+            self.accuracy_score = self.calculate_accuracy_score()
+        super().save(*args, **kwargs)
+
+    # def accuracy_score_changed(self):
+    #     return self.pk is None or self.accuracy_score != self.__class__.objects.get(pk=self.pk).accuracy_score
+    
+    def accuracy_score_changed(self):
+        return self.pk is None or self.accuracy_score != self.__class__.objects.get(pk=self.pk).accuracy_score
+
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
     

@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-hs6j037urx6iav+7#10%-vu4l4f5@@-1_zo)oft4g7$vf2$jmp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.197','192.168.1.16','192.168.1.2','192.168.1.4','192.168.1.6','192.168.1.5','192.168.1.3','192.168.1.7','192.168.1.9','192.168.230.169']
+ALLOWED_HOSTS = ['192.168.0.197','192.168.1.8','192.168.1.2','192.168.1.4','192.168.1.6','192.168.1.5','192.168.1.3','192.168.1.7','192.168.1.9','192.168.230.169']
 
 # Application definition
 
@@ -102,6 +102,7 @@ WSGI_APPLICATION = 'storefront.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'creambackend_new',
         'NAME': 'creambackend',
         'HOST': 'localhost',
         'USER': 'root',
@@ -189,9 +190,11 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
-   'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
+    'AUTH_HEADER_TYPES': ('JWT',),
+#   'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=20),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
+#    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=40),
 }
 
 # DJOSER ={
@@ -253,7 +256,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 ]
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
-# expires in 6 months
+# expires in 6 months https://drf-social-oauth2.readthedocs.io/en/latest/customization.html#customize-token-expiration
 oauth2_settings.DEFAULTS['ACCESS_TOKEN_EXPIRE_SECONDS'] = 1.577e7
 
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db.models.aggregates import Count
-from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student, Accuracy, Trending, FLTCollection, TrendingArchive
+from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student, Accuracy, Trending, FLTCollection, TrendingArchive, BlogCardButton
 from django_summernote.admin import SummernoteModelAdmin
 # Register your models here.
 
@@ -9,6 +9,7 @@ admin.site.register(Subject)
 admin.site.register(Topic)
 admin.site.register(FLTCollection)
 admin.site.register(TrendingArchive)
+admin.site.register(BlogCardButton)
 # admin.site.register(Trending)
 
 

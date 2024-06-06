@@ -5,6 +5,8 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register('students', views.StudentViewSet)
 router.register('creamcards', views.CreamCardsViewSet, basename='creamcards')
+router.register('blogcardbutton', views.BlogCardButtonViewSet, basename='blogcardbutton')
+router.register(r'published-creamcards-ids', views.PublishedCreamCardsIDViewSet, basename='published-creamcards-ids')
 # router.register('questions', views.QuizQuestionsViewSet) //removed because not needed
 router.register('q_collection', views.QuizQuestionsCollectionViewSet)
 #there is no point in exposing the questions list -- only detail view is to be used
