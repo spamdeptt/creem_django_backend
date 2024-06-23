@@ -1,17 +1,17 @@
 from django.contrib import admin
 from django.db.models.aggregates import Count
-from .models import QuizQuestionCollection, Author, Subject, Topic,Creamcard, QuizQuestion, Student, Accuracy, Trending, FLTCollection, TrendingArchive, BlogCardButton
+from .models import QuizQuestionCollection, Author,NotesCardsCollection, Subject, Topic,Creamcard,NotesCard, QuizQuestion, Student, Accuracy, Trending, FLTCollection, TrendingArchive, BlogCardButton
 from django_summernote.admin import SummernoteModelAdmin
 # Register your models here.
 
 admin.site.register(Author)
 admin.site.register(Subject)
 admin.site.register(Topic)
-admin.site.register(FLTCollection)
 admin.site.register(TrendingArchive)
 admin.site.register(BlogCardButton)
+# admin.site.register(FLTCollection)
 # admin.site.register(Trending)
-
+admin.site.register(FLTCollection)
 
 class CollectionInline(admin.TabularInline):
     model = QuizQuestion.collection.through
@@ -21,6 +21,13 @@ class CollectionInline(admin.TabularInline):
 class SummerAdmin(SummernoteModelAdmin): 
     summernote_fields = ('body',)
 class CreamCardsAdmin(admin.ModelAdmin):
+    list_display = ("created_at","title","subject")
+    search_fields = ('title',)
+
+@admin.register(NotesCard)
+class SummerAdmin(SummernoteModelAdmin): 
+    summernote_fields = ('body',)
+class NotesCardsAdmin(admin.ModelAdmin):
     list_display = ("created_at","title","subject")
     search_fields = ('title',)
 
@@ -55,7 +62,25 @@ class QuizQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(QuizQuestionCollection)
 class QuizQuestionCollectionAdmin(admin.ModelAdmin):
-    list_display= ['id','created_at','title']
+    list_display= ['title','question_count','created_at']
+        
+    fieldsets = (
+        (None, {
+            'fields': ('created_at', 'title', 'subject'),
+            'description': 'Make sure there is aleast one quiz question associated with QQC, else it breaks the app.'
+        }),
+    )
+
+@admin.register(NotesCardsCollection)
+class NotesCardsCollectionAdmin(admin.ModelAdmin):
+    list_display= ['topic', 'subject', 'created_at', 'notes_count']
+        
+    fieldsets = (
+        (None, {
+            'fields': ('topic', 'subject', 'created_at'),
+            'description': 'Make sure there is aleast one NoteCard associated with NCC, else it breaks the app.'
+        }),
+    )
 
 
 

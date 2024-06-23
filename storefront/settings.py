@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-hs6j037urx6iav+7#10%-vu4l4f5@@-1_zo)oft4g7$vf2$jmp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.197','192.168.1.8','192.168.1.2','192.168.1.4','192.168.1.6','192.168.1.5','192.168.1.3','192.168.1.7','192.168.1.9','192.168.230.169']
+ALLOWED_HOSTS = ['192.168.0.197','192.168.1.11','192.168.1.2','192.168.1.4','192.168.1.6','192.168.1.5','192.168.1.3','192.168.1.7','192.168.1.9','192.168.230.169']
 
 # Application definition
 
@@ -66,7 +66,7 @@ INTERNAL_IPS = [
     '192.168.1.5',
     '192.168.1.6',
     '192.168.1.7',
-    '192.168.1.9',
+    '192.168.1.11',
     '192.168.1.16',
     '192.168.230.169',
     '192.168.0.197',
@@ -260,4 +260,21 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 oauth2_settings.DEFAULTS['ACCESS_TOKEN_EXPIRE_SECONDS'] = 1.577e7
 
 
+# settings.py
+
+
+SUMMERNOTE_CONFIG = {
+    'toolbar': [
+        ['style', ['style']],
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['fontname', ['fontname']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['height', ['height']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', 'video']],
+        ['view', ['fullscreen', 'codeview', 'help']],
+    ],
+    'attachment_absolute_uri': True,
+}
 

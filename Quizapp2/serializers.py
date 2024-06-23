@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending,TrendingArchive, FLTCollection, BlogCardButton
+from .models import Creamcard, QuizQuestion, QuizQuestionCollection, Student, Trending,TrendingArchive, FLTCollection, BlogCardButton, NotesCardsCollection, NotesCard, Subject
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 class QuizQuestionSerializerSimple(serializers.ModelSerializer):
@@ -7,7 +7,7 @@ class QuizQuestionSerializerSimple(serializers.ModelSerializer):
     class Meta:
         model = QuizQuestionCollection
         # fields = ['id','title','subject','count']
-        fields = ['id','title','subject']
+        fields = ['id','title','subject','created_at']
     
     # def get_count(self, obj):
     #     return QuizQuestionCollection.objects.all().count()
@@ -16,12 +16,27 @@ class FLTCollectionSerializer(serializers.ModelSerializer):
     tests = QuizQuestionSerializerSimple(many=True, read_only=True)
     class Meta:
         model = FLTCollection
-        fields = ['id','title','description','tests']
+        fields = ['id','title','description','tests','created_at']
+
+class NotesCardSerializer(serializers.ModelSerializer):
+    subject = serializers.CharField(source='subject.subject_name', read_only=True) 
+    class Meta:
+        model = NotesCard
+        fields = ['id','subject', 'title', 'body']  # Adjust fields as per your requirement
+
+class NotesCardsCollectionSerializer(serializers.ModelSerializer):
+    subject = serializers.StringRelatedField()
+    notes_cards = NotesCardSerializer(many=True, read_only=True)  # Define the nested serializer for NotesCard
+    class Meta:
+        model = NotesCardsCollection
+        fields = ['id', 'topic', 'subject', 'notes_cards']
 
 class CreamCardsSerializer(serializers.ModelSerializer):
+    related_notes_collection = NotesCardsCollectionSerializer(read_only=True)
+    
     class Meta:
         model = Creamcard
-        fields = ['id','created_at','subject','ImageURL','title','body','related_quiz']
+        fields = ['id', 'created_at', 'subject', 'ImageURL', 'title', 'body', 'related_quiz', 'related_notes_collection']
     subject = serializers.StringRelatedField()
 
 class CreamCardIDSerializer(serializers.ModelSerializer):
@@ -55,7 +70,7 @@ class QuizQuestionSerializers(serializers.ModelSerializer): #https://stackoverfl
 class QuizQuestionCollectionSerializers(serializers.ModelSerializer):  #https://stackoverflow.com/a/33182227/3344514
     class Meta:
         model = QuizQuestionCollection
-        fields = ['id','collection_questions']
+        fields = ['created_at','id','collection_questions']
     
     collection_questions = QuizQuestionSerializers(many=True, read_only=True)
 

@@ -33,20 +33,36 @@ class Topic(models.Model):
         return f"({self.subject})-{self.name}"
 
 class QuizQuestionCollection(models.Model):
-    created_at  = models.DateField(auto_now_add=True, blank=True, null=True)
+    created_at  = models.DateField(default=timezone.now)
     title = models.CharField(max_length=255)
     subject = models.CharField(max_length=255,blank=True, null=True)
     def __str__(self):
         return self.title
+    
+    def question_count(self):
+        return self.collection_questions.count()  # Use the related_name defined earlier in NotesCard model
+    question_count.short_description = 'Quiz Questions Count'
+
+class NotesCardsCollection(models.Model):
+    created_at  = models.DateField(default=timezone.now)
+    topic = models.CharField(max_length=255,blank=True, null=True)
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True )
+    
+    def __str__(self):
+        return self.topic
+    
+    def notes_count(self):
+        return self.notes_cards.count()  # Use the related_name defined earlier in NotesCard model
+    notes_count.short_description = 'Notes Count'
 
 class FLTCollection(models.Model):
     title = models.CharField(max_length=255,blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     tests = models.ManyToManyField(QuizQuestionCollection)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.title}"
-
     class Meta:
         verbose_name_plural = "FLT Collections"
 
@@ -85,12 +101,30 @@ class Creamcard(models.Model):
     title = models.CharField(max_length=500)
     body = models.TextField(blank=True, null=True)
     related_quiz = models.ForeignKey(QuizQuestionCollection, on_delete=models.SET_NULL,null=True, blank=True)
+    related_notes_collection = models.ForeignKey(NotesCardsCollection, on_delete=models.SET_NULL,null=True, blank=True)
 
     def __str__(self):
         return f"{self.title}"
 
     class Meta:
          verbose_name_plural = "Cream Cards"
+
+# HOW TO USE THE RELATED NAME TO access the NotesCard objects related to a NotesCardsCollection instance 
+# notes_collection = NotesCardsCollection.objects.get(id=1)
+# related_notes = notes_collection.notes_cards.all()
+class NotesCard(models.Model):
+    created_at  = models.DateTimeField(null=True)
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True )
+    title = models.CharField(max_length=500)
+    body = models.TextField(blank=True, null=True)
+    collection = models.ManyToManyField(NotesCardsCollection, blank=True, related_name="notes_cards" )
+
+    def __str__(self):
+        return f"{self.title}"
+
+    class Meta:
+         verbose_name_plural = "NotesCards"
+
 
 class BlogCardButton(models.Model):
     created_at  = models.DateTimeField(null=True)
@@ -206,7 +240,6 @@ class Student(models.Model):
     class Meta:
         ordering = ['user__first_name', 'user__last_name']
         # permissions =[('view_history','Can view history')]
-
 
 class Accuracy(models.Model):
     # user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

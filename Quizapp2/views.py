@@ -173,8 +173,6 @@ class FLTCollectionViewSet(ModelViewSet):
     queryset = FLTCollection.objects.all()
     serializer_class = FLTCollectionSerializer
     # permission_classes = [IsAdminOrReadOnly]     change this before production
-    
-    
 
 
 #-------- 
