@@ -46,7 +46,7 @@ class QuizQuestionCollection(models.Model):
 class NotesCardsCollection(models.Model):
     created_at  = models.DateField(default=timezone.now)
     topic = models.CharField(max_length=255,blank=True, null=True)
-    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True )
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True, blank=True )
     
     def __str__(self):
         return self.topic
@@ -65,7 +65,6 @@ class FLTCollection(models.Model):
         return f"{self.title}"
     class Meta:
         verbose_name_plural = "FLT Collections"
-
 
 class QuizQuestion(models.Model):
     created_at  = models.DateTimeField(null=True)
@@ -116,6 +115,7 @@ class NotesCard(models.Model):
     created_at  = models.DateTimeField(null=True)
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True )
     title = models.CharField(max_length=500)
+    subtitle = models.CharField(max_length=500, blank=True, null=True)
     body = models.TextField(blank=True, null=True)
     collection = models.ManyToManyField(NotesCardsCollection, blank=True, related_name="notes_cards" )
 

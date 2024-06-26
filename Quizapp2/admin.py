@@ -71,6 +71,10 @@ class QuizQuestionCollectionAdmin(admin.ModelAdmin):
         }),
     )
 
+class NotesCardInline(admin.TabularInline):  # or admin.StackedInline for a different layout
+    model = NotesCard.collection.through  # Use the through model for the ManyToMany relationship
+    extra = 1  # Number of extra forms to display
+
 @admin.register(NotesCardsCollection)
 class NotesCardsCollectionAdmin(admin.ModelAdmin):
     list_display= ['topic', 'subject', 'created_at', 'notes_count']
@@ -81,6 +85,8 @@ class NotesCardsCollectionAdmin(admin.ModelAdmin):
             'description': 'Make sure there is aleast one NoteCard associated with NCC, else it breaks the app.'
         }),
     )
+    inlines = [NotesCardInline]
+    
 
 
 

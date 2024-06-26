@@ -102,8 +102,8 @@ WSGI_APPLICATION = 'storefront.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'creambackend_new',
-        'NAME': 'creambackend',
+        'NAME': 'creambackend_new',
+        # 'NAME': 'creambackend',
         'HOST': 'localhost',
         'USER': 'root',
         'PASSWORD':'hhayiafty;1824SQL'

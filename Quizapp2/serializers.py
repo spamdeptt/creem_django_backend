@@ -22,7 +22,7 @@ class NotesCardSerializer(serializers.ModelSerializer):
     subject = serializers.CharField(source='subject.subject_name', read_only=True) 
     class Meta:
         model = NotesCard
-        fields = ['id','subject', 'title', 'body']  # Adjust fields as per your requirement
+        fields = ['id','subject', 'title','subtitle','body']  # Adjust fields as per your requirement
 
 class NotesCardsCollectionSerializer(serializers.ModelSerializer):
     subject = serializers.StringRelatedField()
